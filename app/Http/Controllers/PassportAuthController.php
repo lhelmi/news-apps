@@ -2,6 +2,7 @@
 namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Providers\LoginHistory;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 
@@ -23,6 +24,8 @@ class PassportAuthController extends Controller
      if ($request->remember_me)
          $token->expires_at = Carbon::now()->addWeeks(1);
      $token->save();
+     $user = Auth::user();
+    event(new LoginHistory($user));
      return response()->json([
          'access_token' => $tokenResult->accessToken,
          'token_type' => 'Bearer',

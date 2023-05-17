@@ -51,7 +51,7 @@ class NewsRepository extends Repository
             $post->save();
             DB::commit();
             $this->moveImage($image, Constant::IMG_PATH_NEWS, $request->image);
-            return parent::response(true, 'Saved', null);
+            return parent::response(true, 'Saved', $post->id);
         } catch (\Throwable $th) {
             DB::rollBack();
             return parent::response(false, $th->getMessage(), null);
