@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\CreateCommentJob;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use App\Repositories\CommentRepository;
 use App\Validates\CommentValidate;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 
 class CommentController extends Controller
 {
@@ -23,9 +24,12 @@ class CommentController extends Controller
     {
         $validation = $this->validation->store($request);
         if ($validation != null) return parent::getRespnse(Response::HTTP_BAD_REQUEST, $validation);
-
-        $save = $this->repository->store($request);
-        if(!$save['res']) return parent::getRespnse(Response::HTTP_BAD_REQUEST, $save['message'], null);
-        return parent::getRespnse(Response::HTTP_CREATED, $save['message'], null);
+        $commentData = [
+            'comment' => $request->comment,
+            'user_id' => (integer)Auth::user()->id,
+            'news_id' => (integer)$request->news_id
+        ];
+        CreateCommentJob::dispatch($commentData);
+        return parent::getRespnse(Response::HTTP_PROCESSING, 'Processing', null);
     }
 }

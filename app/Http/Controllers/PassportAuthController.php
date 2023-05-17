@@ -1,7 +1,6 @@
 <?php
 namespace App\Http\Controllers;
 use Illuminate\Http\Request;
-use App\Models\User;
 use App\Providers\LoginHistory;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -49,7 +48,6 @@ class PassportAuthController extends Controller
         return parent::getRespnse(Response::HTTP_ACCEPTED, "Login Success", $data);
    }
 
-
    public function register(Request $request)
    {
         $validation = $this->validation->register($request);
@@ -60,11 +58,14 @@ class PassportAuthController extends Controller
 
         return parent::getRespnse(Response::HTTP_CREATED, $save['message'], null);
    }
+
    public function logout(Request $request)
-   {
+    {
         $request->user()->token()->revoke();
         return parent::getRespnse(Response::HTTP_OK, "Successfully logged out", null);
     }
+
+
     public function user(Request $request)
     {
         return parent::getRespnse(Response::HTTP_OK, "user's profile", $request->user());
